@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.sys.mapper.DictTypeMapper">
+
+	<resultMap id="BaseResultMap" type="com.jeeplus.modules.sys.entity.DictType" >
+		<id column="id" property="id" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<collection property="dictValueList" javaType="java.util.ArrayList" ofType="com.jeeplus.modules.sys.entity.DictValue"
+					select="com.jeeplus.modules.sys.mapper.DictValueMapper.getDictValueByType"
+					column="{dict_type_id=id}" />
+		<!-- dict_type_id是定义的变量名, id是主表的字段id/sort 多个参数 column="{dict_type_id=id,xx=xx}",
+        先查出主表的结果, 然后主表记录数是几 就执行几次 collection 的select,
+        javaType写不写都行 mybatis会自行匹配,
+        select的值: 对应xml的namespace + 对应xml中的代码片段的id,
+        column作为select语句的参数传入,如果只传一个参数id可以简写: column="id" -->
+	</resultMap>
+
+	<select id="getDict" resultMap="BaseResultMap">
+		select * from sys_dict_type
+		<where>
+
+		</where>
+	</select>
+
+	<select id="getDictList" resultType="com.jeeplus.modules.sys.vo.DictTypeVO">
+
+	</select>
+
+</mapper>

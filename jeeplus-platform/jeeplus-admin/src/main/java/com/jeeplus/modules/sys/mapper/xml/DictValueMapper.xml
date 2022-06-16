@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeeplus.modules.sys.mapper.DictValueMapper">
+
+	<sql id="dictValueColumns">
+		a.id AS "id",
+		a.label AS "label",
+		a.value AS "value",
+		a.sort AS "sort",
+		a.dict_type_id AS "dictTypeId",
+		a.dict_type AS "dictType",
+		a.parent_id AS "parentId"
+	</sql>
+
+	<select id="getDictValueByType" resultType="com.jeeplus.modules.sys.entity.DictValue">
+		SELECT
+		<include refid="dictValueColumns"/>
+		FROM
+		sys_dict_value a
+		<where>
+			a.dict_type_id = #{dict_type_id}
+			<!-- 变量名 dict_type_id 对应上文的 dict_type_id -->
+			<!-- 如果上文中 collection只传一个参数column="id",只要类型匹配,在这里随便写个变量名就可以取到值 #{xyz} -->
+		</where>
+		ORDER BY a.sort ASC
+	</select>
+
+	<select id="getDictValueList" resultType="com.jeeplus.modules.sys.vo.DictValueVO">
+
+	</select>
+
+</mapper>
