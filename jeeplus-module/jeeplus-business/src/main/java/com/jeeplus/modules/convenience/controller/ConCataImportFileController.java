@@ -62,7 +62,7 @@ public class ConCataImportFileController extends BaseController {
     }
 
     /**
-     * 便民目录导入文件列表数据
+     * 便民目录导入列表数据
      * @param conCataImportFile
      * @param request
      * @param response

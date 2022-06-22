@@ -60,6 +60,14 @@ public class ConCataImportController extends BaseController {
         return entity;
     }
 
+    /**
+     * 便民目录导入查看列表数据
+     * @param conCataImport
+     * @param request
+     * @param response
+     * @param model
+     * @return
+     */
     @GetMapping(value = "list")
     public AjaxJson list(ConCataImport conCataImport, HttpServletRequest request, HttpServletResponse response, Model model) {
         String pageNo = request.getParameter("pageNo");

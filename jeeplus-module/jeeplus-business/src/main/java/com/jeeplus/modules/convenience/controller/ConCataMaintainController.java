@@ -6,8 +6,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jeeplus.common.json.AjaxJson;
 import com.jeeplus.common.utils.StringUtils;
 import com.jeeplus.core.web.BaseController;
+import com.jeeplus.modules.convenience.entity.ConCataInventory;
 import com.jeeplus.modules.convenience.entity.ConCataMaintain;
+import com.jeeplus.modules.convenience.service.ConCataInventoryService;
 import com.jeeplus.modules.convenience.service.ConCataMaintainService;
+import com.jeeplus.modules.sys.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +33,9 @@ public class ConCataMaintainController extends BaseController {
 
     @Autowired
     private ConCataMaintainService cataMaintainService;
+
+    @Autowired
+    private ConCataInventoryService cataInventoryService;
 
     public ConCataMaintain get(@RequestParam(required = false)String id) {
         ConCataMaintain entity = null;
@@ -130,6 +136,48 @@ public class ConCataMaintainController extends BaseController {
     public AjaxJson edit(ConCataMaintain conCataMaintain) {
         cataMaintainService.updateById(conCataMaintain);
         return AjaxJson.success();
+    }
+
+
+    /**
+     * 便民目录认领列表数据
+     * @param cataMaintain
+     * @param request
+     * @param response
+     * @param model
+     * @return
+     */
+    @GetMapping(value = "claimList")
+    public AjaxJson claimList(ConCataMaintain cataMaintain, HttpServletRequest request, HttpServletResponse response, Model model) {
+        String pageNo = request.getParameter("pageNo");
+        String pageSize = request.getParameter("pageSize");
+        LambdaQueryChainWrapper<ConCataMaintain> query = cataMaintainService.lambdaQuery();
+        if (StringUtils.isNotBlank(cataMaintain.getBaseCode())) {
+            query.eq(ConCataMaintain::getBaseCode,cataMaintain.getBaseCode());
+        }
+        if (StringUtils.isNotBlank(cataMaintain.getCataName())) {
+            query.like(ConCataMaintain::getCataName,cataMaintain.getCataName());
+        }
+        if (StringUtils.isNotBlank(cataMaintain.getCataType())) {
+            query.eq(ConCataMaintain::getCataType,cataMaintain.getCataType());
+        }
+        query.eq(ConCataMaintain::getMaxVersion,"1");
+        List<ConCataInventory> inventory = cataInventoryService.lambdaQuery()
+                .eq(ConCataInventory::getOrgCode, UserUtils.getUser().getOrgCode()).list();
+        query.notIn(inventory.size()>0,ConCataMaintain::getBaseCode,cataInventoryService,inventory);
+        IPage<ConCataMaintain> page = query.page(new Page<>(Long.parseLong(pageNo), Long.parseLong(pageSize)));
+        return AjaxJson.success().data(page);
+    }
+
+    /**
+     * 目录认领
+     * @param cataMaintain
+     * @return
+     */
+    @PostMapping(value = "cataClaim")
+    public AjaxJson cataClaim(ConCataMaintain cataMaintain) {
+        cataInventoryService.saveCata(cataMaintain);
+        return AjaxJson.success("保存成功");
     }
 
 

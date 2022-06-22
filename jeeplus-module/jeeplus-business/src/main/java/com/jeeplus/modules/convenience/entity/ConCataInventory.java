@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.jeeplus.core.ext.persistence.DataEntity;
 import lombok.Data;
 
+/**
+ * 便民目录清单
+ */
 @Data
 @TableName("con_cata_inventory")
 public class ConCataInventory extends DataEntity<ConCataInventory> {

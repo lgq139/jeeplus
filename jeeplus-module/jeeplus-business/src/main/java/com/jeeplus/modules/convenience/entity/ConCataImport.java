@@ -44,7 +44,7 @@ public class ConCataImport extends DataEntity<ConCataImport> {
     @ExcelField(title = "版本号（必填,且为正数）")
     @NotNull
     private Integer cataVersion;
-    @ExcelField(title = "备注")
-    private String remarks;
+   /* @ExcelField(title = "备注")
+    private String remarks;*/
 
 }
