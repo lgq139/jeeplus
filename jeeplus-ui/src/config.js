@@ -1,6 +1,6 @@
 
 export default {
-  productName: '基础配置系统',
+  productName: '基层便民服务后台管理系统',
   tokenName: 'base_config_access_token',
   //------------------------
   // 统一认证，开发环境clientId

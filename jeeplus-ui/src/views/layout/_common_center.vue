@@ -1,14 +1,14 @@
 <template>
   <main class="jp-content" :class="{ 'jp-content--tabs': isTab }">
     <!-- 主入口标签页 s -->
-    <div v-if="contextmenuFlag" class="jp-tags__contentmenu" :style="{left:contentmenuX+'px',top:contentmenuY+'px'}">
-      <el-dropdown-item v-if="selectTabName !=='/home'" @click.native="tabsCloseCurrentHandle(selectTabName)">关闭当前标签页
-      </el-dropdown-item>
-      <el-dropdown-item @click.native="tabsCloseOtherHandle(selectTabName)">关闭其它标签页</el-dropdown-item>
-      <el-dropdown-item @click.native="tabsCloseAllHandle">关闭全部标签页</el-dropdown-item>
-      <el-dropdown-item @click.native="$router.push({path: selectTabName}), contextmenuFlag = false">刷新当前标签页
-      </el-dropdown-item>
-    </div>
+<!--    <div v-if="contextmenuFlag" class="jp-tags__contentmenu" :style="{left:contentmenuX+'px',top:contentmenuY+'px'}">-->
+<!--      <el-dropdown-item v-if="selectTabName !=='/home'" @click.native="tabsCloseCurrentHandle(selectTabName)">关闭当前标签页-->
+<!--      </el-dropdown-item>-->
+<!--      <el-dropdown-item @click.native="tabsCloseOtherHandle(selectTabName)">关闭其它标签页</el-dropdown-item>-->
+<!--      <el-dropdown-item @click.native="tabsCloseAllHandle">关闭全部标签页</el-dropdown-item>-->
+<!--      <el-dropdown-item @click.native="$router.push({path: selectTabName}), contextmenuFlag = false">刷新当前标签页-->
+<!--      </el-dropdown-item>-->
+<!--    </div>-->
 
     <!-- 多页签模式 -->
     <el-tabs
@@ -18,18 +18,18 @@
       @contextmenu.native="handleContextmenu"
       @tab-click="selectedTabHandle"
       @tab-remove="removeTabHandle">
-      <el-dropdown class="jp-tabs__tools" :show-timeout="0">
-        <div>
-          <el-divider direction="vertical"></el-divider>
-          <i class="el-icon-arrow-down el-icon--right"></i>
-        </div>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-if="mainTabsActiveName !=='/home'" @click.native="tabsCloseCurrentHandle('')">关闭当前标签页</el-dropdown-item>
-          <el-dropdown-item @click.native="tabsCloseOtherHandle('')">关闭其它标签页</el-dropdown-item>
-          <el-dropdown-item @click.native="tabsCloseAllHandle">关闭全部标签页</el-dropdown-item>
-          <el-dropdown-item @click.native="tabsRefreshCurrentHandle">刷新当前标签页</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+<!--      <el-dropdown class="jp-tabs__tools" :show-timeout="0">-->
+<!--        <div>-->
+<!--          <el-divider direction="vertical"></el-divider>-->
+<!--          <i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>-->
+<!--        </div>-->
+<!--        <el-dropdown-menu slot="dropdown">-->
+<!--          <el-dropdown-item v-if="mainTabsActiveName !=='/home'" @click.native="tabsCloseCurrentHandle('')">关闭当前标签页</el-dropdown-item>-->
+<!--          <el-dropdown-item @click.native="tabsCloseOtherHandle('')">关闭其它标签页</el-dropdown-item>-->
+<!--          <el-dropdown-item @click.native="tabsCloseAllHandle">关闭全部标签页</el-dropdown-item>-->
+<!--          <el-dropdown-item @click.native="tabsRefreshCurrentHandle">刷新当前标签页</el-dropdown-item>-->
+<!--        </el-dropdown-menu>-->
+<!--      </el-dropdown>-->
       <el-tab-pane
         v-for="(item) in mainTabs"
         :key="item.fullPath.replace('/', '-').replace('?', '-').replace('&', '-').replace('=', '-')"

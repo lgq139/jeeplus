@@ -191,6 +191,8 @@
               this.refreshList()
             }
           })
+        }).catch((err)=>{
+          console.log(err)
         })
       },
       pushSyncRole() {

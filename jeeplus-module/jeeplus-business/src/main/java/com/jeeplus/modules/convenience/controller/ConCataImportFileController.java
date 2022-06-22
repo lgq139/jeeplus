@@ -74,8 +74,8 @@ public class ConCataImportFileController extends BaseController {
         String pageNo = request.getParameter("pageNo");
         String pageSize = request.getParameter("pageSize");
         LambdaQueryChainWrapper<ConCataImportFile> query = importFileService.lambdaQuery();
-        if (StringUtils.isNotBlank(conCataImportFile.getCreateBy())) {
-            query.like(ConCataImportFile::getCreateBy,conCataImportFile.getCreateBy());
+        if (StringUtils.isNotBlank(conCataImportFile.getImportUserName())) {
+            query.like(ConCataImportFile::getImportUserName,conCataImportFile.getImportUserName());
         }
         if (StringUtils.isNotBlank(conCataImportFile.getImportOrgName())) {
             query.like(ConCataImportFile::getImportOrgName,conCataImportFile.getImportOrgName());

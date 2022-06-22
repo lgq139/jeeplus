@@ -101,6 +101,7 @@ export default {
     &:not(.is-fullscreen) {
       margin-top: 0 !important;
     }
+
   }
   .el-dialog__header {
     padding: 16px 20px;
@@ -117,6 +118,9 @@ export default {
     }
     .el-dialog__headerbtn {
       position: static;
+      :hover{
+        color: #267FD3 !important;
+      }
     }
   }
   .el-dialog__body {
@@ -128,6 +132,39 @@ export default {
   .el-dialog__footer {
     padding: 10px 20px;
     border-top: 1px solid $border-color-base !important;
+    .el-button{
+      color: #666;
+      height: 32px;
+      padding: 0 16px;
+      text-align: center;
+      line-height: 32px;
+      border-radius: 2px;
+      background: #fff;
+      border: 1px solid #E6E6E6;
+    }
+    /*.el-button:hover{*/
+    /*  background: #fff !important;*/
+    /*  border: 1px solid #267FD3 !important;*/
+    /*  color: #267FD3 !important;*/
+    /*}*/
+    .el-button--default:hover{
+      background: #fff !important;
+      border: 1px solid #267FD3 !important;
+      color: #267FD3 !important;
+    }
+    .el-button--primary{
+      color: #FFF;
+      background-color: #267FD3;
+      border-color: #267FD3;
+    }
+    /*.el-button--primary:hover{*/
+    /*  color: #FFF;*/
+    /*  background-color: #267FD3;*/
+    /*  border-color: #267FD3;*/
+    /*}*/
+    .el-form-item{
+      margin-bottom: 0;
+    }
   }
 }
 </style>

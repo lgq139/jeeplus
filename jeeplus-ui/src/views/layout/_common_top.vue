@@ -3,50 +3,50 @@
     <div class="jp-navbar__header">
       <h1 class="jp-navbar__brand" @click="$router.push({ name: 'home' })">
         <a class="jp-navbar__brand-lg" href="javascript:;">
-          <img src="../../assets/img/logo_new.png" height="30px" width="30px" style="margin-right: 8px;"/> {{productName}}
+          <img src="../../assets/img/logo_new.png" height="24px" width="24px" style="margin-right: 8px;margin-bottom: 2px"/> {{productName}}
         </a>
         <a class="jp-navbar__brand-mini" href="javascript:;">
-          <img src="../../assets/img/logo_new.png" height="30px" width="30px"/>
+          <img src="../../assets/img/logo_new.png" height="24px" width="24px"/>
         </a>
       </h1>
     </div>
 
     <div class="jp-navbar__body clearfix" style="overflow:hidden">
 
-      <el-menu
-        class="jp-navbar__menu"
-        mode="horizontal">
-        <el-menu-item class="jp-navbar__switch" @click="sidebarFold = !sidebarFold">
-          <i :class="sidebarFold ? 'fa fa-indent':'fa fa-dedent'"></i>
-        </el-menu-item>
-      </el-menu>
+<!--      <el-menu-->
+<!--        class="jp-navbar__menu"-->
+<!--        mode="horizontal">-->
+<!--        <el-menu-item class="jp-navbar__switch" @click="sidebarFold = !sidebarFold">-->
+<!--          <i :class="sidebarFold ? 'fa fa-indent':'fa fa-dedent'"></i>-->
+<!--        </el-menu-item>-->
+<!--      </el-menu>-->
 
-      <ch-breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="defaultLayout !== 'top'"/>
+<!--      <ch-breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="defaultLayout !== 'top'"/>-->
 
-      <el-menu class="jp-navbar__menu " :default-active="topMenuActiveIndex" ref="topMenu" mode="horizontal">
-        <el-menu-item class="el_menu_item" v-for="menu in topMenuList"
-                      :index="menu.id"
-                      :key="menu.id"
-                      @click="showLeftMenu(menu)"
-                      :ref="menu.id"
-                      :menu="menu">
-          <i :class="`${menu.icon} jp-sidebar__menu-icon`" style="display: inline-block!important;"></i>
-          {{menu.name}}
-        </el-menu-item>
+<!--      <el-menu class="jp-navbar__menu " :default-active="topMenuActiveIndex" ref="topMenu" mode="horizontal">-->
+<!--        <el-menu-item class="el_menu_item" v-for="menu in topMenuList"-->
+<!--                      :index="menu.id"-->
+<!--                      :key="menu.id"-->
+<!--                      @click="showLeftMenu(menu)"-->
+<!--                      :ref="menu.id"-->
+<!--                      :menu="menu">-->
+<!--          <i :class="`${menu.icon} jp-sidebar__menu-icon`" style="display: inline-block!important;"></i>-->
+<!--          {{menu.name}}-->
+<!--        </el-menu-item>-->
 
-        <el-submenu index="2" v-if="topHideMenuList.length != 0">
-          <template slot="title">更多</template>
-          <el-menu-item v-for="menu in topHideMenuList"
-                        :index="menu.id"
-                        :key="menu.id"
-                        :ref="menu.id"
-                        @click="showLeftMenu(menu)"
-                        :menu="menu">
-            <i :class="`${menu.icon} jp-sidebar__menu-icon`" style="display: inline-block!important;"></i>
-            {{menu.name}}
-          </el-menu-item>
-        </el-submenu>
-      </el-menu>
+<!--        <el-submenu index="2" v-if="topHideMenuList.length != 0">-->
+<!--          <template slot="title">更多</template>-->
+<!--          <el-menu-item v-for="menu in topHideMenuList"-->
+<!--                        :index="menu.id"-->
+<!--                        :key="menu.id"-->
+<!--                        :ref="menu.id"-->
+<!--                        @click="showLeftMenu(menu)"-->
+<!--                        :menu="menu">-->
+<!--            <i :class="`${menu.icon} jp-sidebar__menu-icon`" style="display: inline-block!important;"></i>-->
+<!--            {{menu.name}}-->
+<!--          </el-menu-item>-->
+<!--        </el-submenu>-->
+<!--      </el-menu>-->
 
       <el-menu
         class="jp-navbar__menu jp-navbar__menu--right"
@@ -59,14 +59,14 @@
         <el-menu-item class="jp-navbar__avatar">
           <el-dropdown :show-timeout="0" placement="bottom">
             <span class="el-dropdown-link">
-              <span style="margin-right: 10px;">{{ userName }}</span>
               <img class="hide-sm" :src="(photo && photo !== '') ? photo:'./static/img/avatar.png'">
+              <span style="margin-right: 10px;font-size: 14px">{{ userName }}</span>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-edit-outline" @click.native="openFormSystem()">表单系统</el-dropdown-item>
+<!--              <el-dropdown-item icon="el-icon-edit-outline" @click.native="openFormSystem()">表单系统</el-dropdown-item>-->
               <el-dropdown-item icon="el-icon-edit-outline" divided disabled @click.native="updatePasswordHandle()">修改密码</el-dropdown-item>
               <el-dropdown-item icon="el-icon-user" @click.native="openUserInfo()">个人信息</el-dropdown-item>
-              <el-dropdown-item icon="el-icon-setting" @click.native="showRight()">主题布局</el-dropdown-item>
+<!--              <el-dropdown-item icon="el-icon-setting" @click.native="showRight()">主题布局</el-dropdown-item>-->
               <el-dropdown-item icon="el-icon-switch-button" divided @click.native="logoutHandle()">退出系统</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
