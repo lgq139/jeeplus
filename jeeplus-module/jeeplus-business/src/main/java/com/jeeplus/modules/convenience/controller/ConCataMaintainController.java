@@ -101,11 +101,12 @@ public class ConCataMaintainController extends BaseController {
         if (StringUtils.isNotBlank(errMsg)) {
             return AjaxJson.error(errMsg);
         }
-        /*ConCataMaintain flag = cataMaintainService.lambdaQuery()
-                .exists("SELECT * FROM con_cata_maintain WHERE base_code=? AND cata_version=?",conCataMaintain.getBaseCode(),conCataMaintain.getCataVersion()).getEntity();
-        if (flag != null) {
-            return AjaxJson.success("基本编码："+conCataMaintain.getBaseCode()+",该版本数据已存在");
-        }*/
+        boolean flag = cataMaintainService.lambdaQuery().eq(ConCataMaintain::getBaseCode, conCataMaintain.getBaseCode())
+                .eq(ConCataMaintain::getCataVersion,conCataMaintain.getCataVersion())
+                .exists();
+        if (flag) {
+            return AjaxJson.error("基本编码："+conCataMaintain.getBaseCode()+",该版本数据已存在");
+        }
         ConCataMaintain entity = cataMaintainService.lambdaQuery()
                 .eq(ConCataMaintain::getBaseCode,conCataMaintain.getBaseCode())
                 .eq(ConCataMaintain::getMaxVersion,"1").one();
