@@ -46,7 +46,8 @@
           <el-table-column
             prop="cataType"
             label="事项类型"
-            min-width="18%">
+            min-width="18%"
+            :formatter="statusFormatter">
           </el-table-column>
           <el-table-column
             prop="state"
@@ -179,11 +180,11 @@
       },
       // 变更
       changeDetails(row){
-        this.$refs.ConvenientPeopleCatalogStickEdit.init('change', {id: ''})
+        this.$refs.ConvenientPeopleCatalogStickEdit.init('change', row)
       },
       // 新增
       add() {
-        this.$refs.ConvenientPeopleCatalogStickEdit.init('add', {id: ''})
+        this.$refs.ConvenientPeopleCatalogStickEdit.init('add', '')
       },
       // 表单数据展示
       refreshList(searchData) {
@@ -205,6 +206,19 @@
         this.pageNumber=1
         this.pageSize=20
         this.refreshList(this.searchData)
+      },
+      // 事项类型转换文字展示
+      statusFormatter(row, column){
+        const type = row.cataType
+        if (type == 1) {
+          return '查询事项'
+        } else if (type == 2) {
+          return '咨询事项'
+        } else if (type == 3) {
+          return '证明事项'
+        } else if (type == 4) {
+          return '便民服务事项'
+        }
       }
     },
     mounted() {
