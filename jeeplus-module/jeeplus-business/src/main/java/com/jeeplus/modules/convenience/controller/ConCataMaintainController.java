@@ -85,6 +85,7 @@ public class ConCataMaintainController extends BaseController {
             query.eq(ConCataMaintain::getCataType,cataMaintain.getCataType());
         }
         query.eq(ConCataMaintain::getMaxVersion,"1");
+        query.orderByDesc(ConCataMaintain::getUpdateDate);
         IPage<ConCataMaintain> page = query.page(new Page<>(Long.parseLong(pageNo), Long.parseLong(pageSize)));
         return AjaxJson.success().data(page);
     }
@@ -161,9 +162,9 @@ public class ConCataMaintainController extends BaseController {
             query.eq(ConCataMaintain::getCataType,cataMaintain.getCataType());
         }
         query.eq(ConCataMaintain::getMaxVersion,"1");
-    /*    List<ConCataInventory> inventory = cataInventoryService.lambdaQuery()
-                .eq(ConCataInventory::getOrgCode, UserUtils.getUser().getOrgCode()).list();
-        query.notIn(inventory.size()>0,ConCataMaintain::getBaseCode,cataInventoryService,inventory);*/
+        query.orderByDesc(ConCataMaintain::getUpdateDate);
+        List<Object> inventory = cataInventoryService.getBaseCodeList(UserUtils.getUser().getOrgCode());
+        query.notIn(inventory.size()>0,ConCataMaintain::getBaseCode,inventory);
         IPage<ConCataMaintain> page = query.page(new Page<>(Long.parseLong(pageNo), Long.parseLong(pageSize)));
         return AjaxJson.success().data(page);
     }

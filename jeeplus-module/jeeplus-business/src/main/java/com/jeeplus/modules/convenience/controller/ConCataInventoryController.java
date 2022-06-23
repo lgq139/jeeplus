@@ -8,6 +8,7 @@ import com.jeeplus.common.utils.StringUtils;
 import com.jeeplus.core.web.BaseController;
 import com.jeeplus.modules.convenience.entity.ConCataInventory;
 import com.jeeplus.modules.convenience.service.ConCataInventoryService;
+import com.jeeplus.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,6 +76,8 @@ public class ConCataInventoryController extends BaseController {
         if (StringUtils.isNotBlank(cataInventory.getCataType())) {
             query.eq(ConCataInventory::getCataType,cataInventory.getCataType());
         }
+        query.eq(ConCataInventory::getOrgCode, UserUtils.getUser().getOrgCode());
+        query.orderByDesc(ConCataInventory::getUpdateDate);
         IPage<ConCataInventory> page = query.page(new Page<>(Long.parseLong(pageNo), Long.parseLong(pageSize)));
         return AjaxJson.success().data(page);
     }

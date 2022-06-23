@@ -25,7 +25,7 @@ public class ConCataImportFile extends DataEntity<ConCataImportFile> {
     private String importLevel;
     /** 操作人员姓名 */
     private String importUserName;
-    /** 导入状态 */
+    /** 导入状态（1：正常  0：暂存） */
     private String importStatus;
 
 

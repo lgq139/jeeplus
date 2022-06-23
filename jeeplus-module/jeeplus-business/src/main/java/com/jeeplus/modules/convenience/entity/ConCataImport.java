@@ -30,11 +30,11 @@ public class ConCataImport extends DataEntity<ConCataImport> {
     private String cataName;
     /** 事项类型 */
     @NotBlank
-    @ExcelField(title = "事项类型（必填）",sort = 2)
+    @ExcelField(title = "事项类型（必填）",dictType="con_item_type",sort = 2)
     private String cataType;
     /** 行使层级 */
     @NotBlank
-    @ExcelField(title = "行使层级（必填）",sort = 3)
+    @ExcelField(title = "行使层级（必填）",dictType="item_level",sort = 3)
     private String cataLevel;
     /** 查验结果 */
     private String checkResult;
@@ -46,5 +46,7 @@ public class ConCataImport extends DataEntity<ConCataImport> {
     private Integer cataVersion;
  /*   @ExcelField(title = "备注")
     private String remarks;*/
+    /** 是否有效数据（0：否  1是） */
+    private String isValid;
 
 }

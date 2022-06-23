@@ -80,6 +80,8 @@ public class ConCataImportFileController extends BaseController {
         if (StringUtils.isNotBlank(conCataImportFile.getImportOrgName())) {
             query.like(ConCataImportFile::getImportOrgName,conCataImportFile.getImportOrgName());
         }
+        query.eq(ConCataImportFile::getImportStatus,"1");
+        query.orderByDesc(ConCataImportFile::getUpdateDate);
         IPage<ConCataImportFile> page = query.page(new Page<>(Long.parseLong(pageNo), Long.parseLong(pageSize)));
         return AjaxJson.success().data(page);
     }
@@ -101,7 +103,7 @@ public class ConCataImportFileController extends BaseController {
         conCataImportFile.setImportUserName(user.getName());
         conCataImportFile.setImportOrgCode(user.getOrgCode());
         conCataImportFile.setImportOrgName(user.getOrgName());
-        conCataImportFile.setImportStatus("1");
+        conCataImportFile.setImportStatus("0");
         importFileService.saveOrUpdate(conCataImportFile);
         return AjaxJson.success("保存成功").data(conCataImportFile);
     }*/
