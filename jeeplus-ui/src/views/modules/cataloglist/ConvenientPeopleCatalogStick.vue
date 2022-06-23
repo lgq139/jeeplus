@@ -11,7 +11,12 @@
           </el-form-item>
           <el-form-item label="事项类型:" prop="state">
             <el-select v-model="searchData.state" placeholder="请选择事项类型">
-              <el-option v-for="(item,key) in stateData" :key="key" :label="item.label" :value="key"></el-option>
+              <el-option
+                v-for="(item,key) in stateData"
+                :key="key"
+                :label="item"
+                :value="key">
+              </el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -75,7 +80,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="pageNumber"
-          :page-sizes="[1, 40, 60, 100]"
+          :page-sizes="[20, 40, 60, 100]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next"
           :total="total">
@@ -83,7 +88,7 @@
       </div>
 
     </div>
-    <ConvenientPeopleCatalogStickEdit ref="ConvenientPeopleCatalogStickEdit" @refreshDataList="refreshList"></ConvenientPeopleCatalogStickEdit>
+    <ConvenientPeopleCatalogStickEdit ref="ConvenientPeopleCatalogStickEdit" @refreshDataList="updateList"></ConvenientPeopleCatalogStickEdit>
   </div>
 
 
@@ -91,6 +96,7 @@
 <!--便民目录认领-->
 <script>
   import {getCatalogStickData,editCatalogStickData} from "@/api/modules/catalog/catalogStick";
+  import {getStateData} from "@/api/modules/catalog/dict";
   import ConvenientPeopleCatalogStickEdit from './ConvenientPeopleCatalogStickEdit'
   export default {
     data () {
@@ -102,26 +108,11 @@
         },
         total:0,
         pageNumber:1,
-        pageSize:1,
+        pageSize:20,
         tableData: [
         ],
         loading:false,
-        stateData:[{
-          value:'1',
-          label:'查询事项'
-        },
-          {
-            value:'2',
-            label:'咨询事项'
-          },
-          {
-            value:'3',
-            label:'证明事项'
-          },
-          {
-            value:'4',
-            label:'便民服务事项'
-          }],
+        stateData:[], // 事项类型数据
         handleId:''
       }
     },
@@ -146,13 +137,15 @@
           // dangerouslyUseHTMLString: true,
           // type: 'info'
         }).then(()=>{
+          this.loading =true
           editCatalogStickData({id:this.handleId,enableStatus:'1'}).then(({data})=>{
             if (data.success){
+              this.$message.success('启用成功')
               this.refreshList(this.searchData)
             }
           })
         }).catch((err)=>{
-          console.log(err)
+          this.$message('取消启用')
         })
       },
       // 停用
@@ -164,18 +157,19 @@
           // dangerouslyUseHTMLString: true,
           // type: 'info'
         }).then(()=>{
+          this.loading =true
           editCatalogStickData({id:this.handleId,enableStatus:'0'}).then(({data})=>{
               if (data.success){
+                this.$message.success('停运成功')
                 this.refreshList(this.searchData)
               }
           })
         }).catch((err)=>{
-          console.log(err)
+          this.$message('取消停运')
         })
       },
       // 查看
       lookDetails(row){
-        console.log(row)
         this.$refs.ConvenientPeopleCatalogStickEdit.init('view', row)
       },
       // 变更
@@ -190,12 +184,32 @@
       refreshList(searchData) {
         this.tableData=[]
         this.loading = true
-        getCatalogStickData({pageNo: this.pageNumber, pageSize: this.pageSize,basecode:searchData.basecode,cataname:searchData.cataname,state:searchData.state}).then(({data}) => {
-          this.loading = false
-          if (data && data.success) {
-            this.total=data.data.total
-            this.tableData=data.data.records
-          }
+        getStateData({dictType:'con_item_type'}).then(({data})=>{
+          this.stateData=data.keyAndValue
+        }).then(()=>{
+          getCatalogStickData({pageNo: this.pageNumber, pageSize: this.pageSize,baseCode:searchData.basecode,cataName:searchData.cataname,cataType:searchData.state}).then(({data}) => {
+            this.loading = false
+            if (data && data.success) {
+              this.total=data.data.total
+              this.tableData=data.data.records
+            }
+          })
+        })
+      },
+      // 新增变更后刷新列表
+      updateList(){
+        this.tableData=[]
+        this.loading = true
+        getStateData({dictType:'con_item_type'}).then(({data})=>{
+          this.stateData=data.keyAndValue
+        }).then(()=>{
+          getCatalogStickData({pageNo: this.pageNumber, pageSize: this.pageSize}).then(({data}) => {
+            this.loading = false
+            if (data && data.success) {
+              this.total=data.data.total
+              this.tableData=data.data.records
+            }
+          })
         })
       },
       // 重置表单
@@ -207,18 +221,13 @@
         this.pageSize=20
         this.refreshList(this.searchData)
       },
+     getStateData(){
+
+     },
       // 事项类型转换文字展示
       statusFormatter(row, column){
         const type = row.cataType
-        if (type == 1) {
-          return '查询事项'
-        } else if (type == 2) {
-          return '咨询事项'
-        } else if (type == 3) {
-          return '证明事项'
-        } else if (type == 4) {
-          return '便民服务事项'
-        }
+        return this.stateData[type]
       }
     },
     mounted() {

@@ -15,3 +15,7 @@ export function editCatalogStickData(params) {
 export function lookCatalogStickData(params) {
   return get('/convience/catalog/maintain/getDetil', params)
 }
+// 事项类型数据
+export function getStateData(params) {
+  return get('/api/getDictdDirectories', params)
+}

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ConCataInventoryService extends ServiceImpl<ConCataInventoryMapper, ConCataInventory>  {
 
+    @Transactional(readOnly = false)
     public boolean saveCata(ConCataMaintain cataMaintain) {
         ConCataInventory cataInventory = new ConCataInventory();
         User user = UserUtils.getUser();

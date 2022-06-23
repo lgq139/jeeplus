@@ -18,8 +18,8 @@
     <slot />
     <template v-if="showFooter" #footer>
       <slot name="action">
-        <el-button type="primary" size="small" @click="submit">{{ confirmText }}</el-button>
-        <el-button size="small" @click="show = false">{{ cancelText }}</el-button>
+        <el-button type="primary" size="small" @click="submit" v-if="isConfirmShow">{{ confirmText}}</el-button>
+        <el-button size="small" @click="show = false">{{ cancelText}}</el-button>
       </slot>
     </template>
   </el-dialog>
@@ -54,12 +54,19 @@ export default {
     confirmText: {
       type: String,
       default: '确 定'
+    },
+    isConfirmShow:{
+      type: Boolean,
+      default: true
     }
   },
-
+  mounted() {
+    console.log(this.isConfirmShow)
+  },
   computed: {
     show: {
       get() {
+
         return this.visible
       },
       set(value) {

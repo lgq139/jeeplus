@@ -134,7 +134,7 @@ public class ConCataMaintainController extends BaseController {
     @PostMapping(value = "edit")
     public AjaxJson edit(ConCataMaintain conCataMaintain) {
         cataMaintainService.updateById(conCataMaintain);
-        return AjaxJson.success();
+        return AjaxJson.success("变更成功");
     }
 
 
@@ -161,9 +161,9 @@ public class ConCataMaintainController extends BaseController {
             query.eq(ConCataMaintain::getCataType,cataMaintain.getCataType());
         }
         query.eq(ConCataMaintain::getMaxVersion,"1");
-        List<ConCataInventory> inventory = cataInventoryService.lambdaQuery()
+    /*    List<ConCataInventory> inventory = cataInventoryService.lambdaQuery()
                 .eq(ConCataInventory::getOrgCode, UserUtils.getUser().getOrgCode()).list();
-        query.notIn(inventory.size()>0,ConCataMaintain::getBaseCode,cataInventoryService,inventory);
+        query.notIn(inventory.size()>0,ConCataMaintain::getBaseCode,cataInventoryService,inventory);*/
         IPage<ConCataMaintain> page = query.page(new Page<>(Long.parseLong(pageNo), Long.parseLong(pageSize)));
         return AjaxJson.success().data(page);
     }
@@ -176,7 +176,7 @@ public class ConCataMaintainController extends BaseController {
     @PostMapping(value = "cataClaim")
     public AjaxJson cataClaim(ConCataMaintain cataMaintain) {
         cataInventoryService.saveCata(cataMaintain);
-        return AjaxJson.success("保存成功");
+        return AjaxJson.success("认领成功");
     }
 
 

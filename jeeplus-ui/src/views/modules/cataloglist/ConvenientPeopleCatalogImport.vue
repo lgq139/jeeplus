@@ -41,7 +41,9 @@
         <el-table-column
           prop="importLevel"
           label="操作层级"
-          min-width="16%">
+          min-width="16%"
+          :formatter="statusFormatter"
+        >
         </el-table-column>
         <el-table-column
           prop="importOrgName"
@@ -77,6 +79,7 @@
 <!--便民目录导入-->
 <script>
   import {getCatalogListData} from "@/api/modules/catalog/catalogList";
+  import {getStateData} from "@/api/modules/catalog/dict";
   export default {
     data () {
       return {
@@ -88,7 +91,8 @@
         pageNumber:1,
         pageSize:20,
         tableData: [],
-        loading:true
+        loading:true,
+        handleLevelData:''
       }
     },
     components: {
@@ -108,13 +112,18 @@
       getCatalogListData(searchData){
         this.tableData=[]
         this.loading=true
-        getCatalogListData({pageNo: this.pageNumber, pageSize: this.pageSize,importOrgName:searchData.branch,importUserName:searchData.userName}).then(({data}) => {
-          if (data && data.success) {
-            this.total=data.data.total
-            this.tableData=data.data.records
-          }
-          this.loading = false
+        getStateData({dictType:'item_level'}).then(({data})=>{
+          this.handleLevelData=data.keyAndValue
+        }).then(()=>{
+          getCatalogListData({pageNo: this.pageNumber, pageSize: this.pageSize,importOrgName:searchData.branch,importUserName:searchData.userName}).then(({data}) => {
+            if (data && data.success) {
+              this.total=data.data.total
+              this.tableData=data.data.records
+            }
+            this.loading = false
+          })
         })
+
       },
       //  刷新列表
       refreshCatalogList(){
@@ -123,6 +132,11 @@
         this.pageNumber=1
         this.pageSize=20
         this.getCatalogListData(this.searchData)
+      },
+      // 事项类型转换文字展示
+      statusFormatter(row, column){
+        const handleLevel = row.importLevel
+        return this.handleLevelData[handleLevel]
       }
     },
     mounted() {

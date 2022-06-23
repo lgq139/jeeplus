@@ -4,17 +4,19 @@
       <div class="public-search-box">
         <el-form :inline="true" class="demo-form-inline" :model="searchData">
           <el-form-item label="基本编码:">
-            <el-input placeholder="请输入基本编码" v-model="searchData.user"></el-input>
+            <el-input placeholder="请输入基本编码" v-model="searchData.basecode"></el-input>
           </el-form-item>
           <el-form-item label="目录名称:">
-            <el-input placeholder="请输入目录名称" v-model="searchData.branch"></el-input>
+            <el-input placeholder="请输入目录名称" v-model="searchData.cataname"></el-input>
           </el-form-item>
           <el-form-item label="事项类型:">
-            <el-select v-model="searchData.state" placeholder="全部">
-              <el-option label="查询事项" value="search"></el-option>
-              <el-option label="咨询事项" value="refer"></el-option>
-              <el-option label="证明事项" value="prove"></el-option>
-              <el-option label="便民服务事项" value="convenient_people"></el-option>
+            <el-select v-model="searchData.state" placeholder="请选择事项类型">
+              <el-option
+                v-for="(item,key) in stateData"
+                :key="key"
+                :label="item"
+                :value="key">
+              </el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -33,19 +35,21 @@
            width="100">
           </el-table-column>
           <el-table-column
-            prop="coding"
+            prop="baseCode"
             label="基本编码"
             min-width="30%">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="cataName"
             label="目录名称"
             min-width="20%">
           </el-table-column>
           <el-table-column
-            prop="type"
+            prop="cataType"
             label="事项类型"
-            min-width="20%">
+            min-width="20%"
+            :formatter="statusFormatter"
+          >
           </el-table-column>
           <el-table-column
             label="操作"
@@ -59,104 +63,106 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="page"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="100"
+          :current-page="pageNumber"
+          :page-sizes="[20, 40, 60, 100]"
+          :page-size="pageSize"
           layout="total, sizes, prev, pager, next"
           :total="total">
         </el-pagination>
       </div>
 
     </div>
-    <ConvenientPeopleCatalogStickEdit ref="ConvenientPeopleCatalogStickEdit" @refreshDataList="refreshList"></ConvenientPeopleCatalogStickEdit>
+    <ConvenientPeopleCatalogStickEdit ref="ConvenientPeopleCatalogStickEdit"></ConvenientPeopleCatalogStickEdit>
   </div>
 
 
 </template>
+<!--便民目录认领-->
 <script>
-  // 便民目录认领
+  import {getCatalogClaimData,catalogClaimData} from "@/api/modules/catalog/catalogClaim";
+  import {getStateData} from "@/api/modules/catalog/dict";
   import ConvenientPeopleCatalogStickEdit from './ConvenientPeopleCatalogStickEdit'
   export default {
     data () {
       return {
         searchData: {
-          user: '',
-          branch: '',
+          basecode: '',
+          cataname: '',
           state:''
         },
-        total:5,
-        page:1,
-        tableData: [{
-          id:1,
-          coding:'012123453412',
-          name:'事项接口',
-          type:'查询事项',
-        },
-          {
-            id:2,
-            coding:'02132456',
-            name:'便民事项',
-            type:'证明事项',
-          }
-        ],
-        loading:false
+        total:0,
+        pageNumber:1,
+        pageSize:20,
+        tableData: [],
+        loading:true,
+        stateData:''// 事项类型数据
       }
     },
     components: {
       ConvenientPeopleCatalogStickEdit
     },
     methods: {
-      handleSizeChange(){
-
+      // 分页相关操作
+      handleSizeChange(val){
+        this.pageSize=val
+        this.getCatalogClaimData(this.searchData)
       },
-      handleCurrentChange(){
-
+      handleCurrentChange(val){
+        this.pageNumber=val
+        this.getCatalogClaimData(this.searchData)
       },
+      // 获取认领列表数据
+      getCatalogClaimData(data){
+        this.tableData=[]
+        this.loading=true
+        getStateData({dictType:'con_item_type'}).then(({data})=>{
+          this.stateData=data.keyAndValue
+        }).then(()=>{
+          getCatalogClaimData({pageNo: this.pageNumber, pageSize: this.pageSize,baseCode:data.basecode,cataName:data.userName,cataType:data.type}).then(({data}) => {
+            if (data && data.success) {
+              this.total=data.data.total
+              this.tableData=data.data.records
+            }
+            this.loading = false
+          })
+        })
+      },
+      // 目录认领
       claim(row){
         console.log(row)
         this.$confirm('该事项认领后进入目录清单,是否认领?', '认领提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          // dangerouslyUseHTMLString: true,
-          // type: 'info'
         }).then(()=>{
-
+          catalogClaimData(row).then(({data})=>{
+            this.$message.success(data.msg)
+            this.getCatalogClaimData(this.searchData)
+          })
         }).catch((err)=>{
-          console.log(err)
+          this.$message('取消认领')
         })
-        //   .then(() => {
-        //   this.loading = true
-        //   this.$http({
-        //     url: '/sys/role/delete',
-        //     method: 'delete',
-        //     params: {'ids': ids}
-        //   }).then(({data}) => {
-        //     this.loading = false
-        //     if (data && data.success) {
-        //       this.$message.success({dangerouslyUseHTMLString: true,
-        //         message: data.msg})
-        //       this.refreshList()
-        //     }
-        //   })
-        // })
       },
+      // 目录查看
       lookDetails(row){
-        console.log(row)
+        this.$refs.ConvenientPeopleCatalogStickEdit.init('view', row)
       },
-      // 新增
-      add() {
-        this.$refs.ConvenientPeopleCatalogStickEdit.init('view', {id: '', parent: {id: '', name: ''}})
+      // 事项类型转换文字展示
+      statusFormatter(row, column){
+        const type = row.cataType
+        return this.stateData[type]
       },
-      refreshList() {
-        this.loading = true
-        console.log(2)
-        // getTreeData2().then(({data}) => {
-        //   this.loading = false
-        //   if (data && data.success) {
-        //     this.dataList = data.data
-        //   }
-        // })
-      },
+      // 重置表单
+      refreshCatalogStick(){
+        this.searchData.basecode=''
+        this.searchData.cataname=''
+        this.searchData.state=''
+        this.pageNumber=1
+        this.pageSize=20
+        this.getCatalogClaimData(this.searchData)
+      }
+    },
+    mounted() {
+      this.getCatalogClaimData(this.searchData)
     }
   }
 </script>
