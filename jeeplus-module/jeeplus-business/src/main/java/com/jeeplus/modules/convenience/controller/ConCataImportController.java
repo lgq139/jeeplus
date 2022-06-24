@@ -79,18 +79,8 @@ public class ConCataImportController extends BaseController {
         return AjaxJson.success().data(page);
     }
 
-/*    @PostMapping("import")
-    public AjaxJson importFile(@RequestParam("file") MultipartFile file, HttpServletResponse response, HttpServletRequest request) {
-        InputStream inputStream = ResourceUtil.getStream("事项目录清单导入文件.xls");
-        EasyExcel.read(inputStream,
-                ConCataImport.class,
-                new ConCataImportListenHandler(cataImportService))
-                .sheet()
-                .doRead();
-        return AjaxJson.success();
-    }*/
-
     @RequestMapping("import")
+    @CrossOrigin
     public AjaxJson importFile(@RequestParam("file")MultipartFile file, HttpServletResponse response, HttpServletRequest request) {
         try {
             int successNum = 0;
@@ -103,42 +93,70 @@ public class ConCataImportController extends BaseController {
                 try{
                     LambdaQueryChainWrapper<ConCataImport> query = cataImportService.lambdaQuery();
                     String errMsg = beanValidator(conCataImport);
-                    List<ConCataImport> res = query.eq(ConCataImport::getBaseCode,conCataImport.getBaseCode())
-                            .eq(ConCataImport::getCataVersion,conCataImport.getCataVersion()).list();
-                    if (res.size() > 0) {
-                        conCataImport.setCheckResult("错误:导入目录相同版本数据已存在");
+                    if (StringUtils.isBlank(errMsg)) {
+                        List<ConCataImport> res = query.eq(ConCataImport::getBaseCode,conCataImport.getBaseCode())
+                                .eq(ConCataImport::getCataVersion,conCataImport.getCataVersion()).list();
+                        conCataImport.setImportFileUuid(fileUuid);
+                        if (res.size() > 0) {
+                            conCataImport.setCheckResult("错误:导入目录相同版本数据已存在");
+                            conCataImport.setImportReport("无效数据");
+                            conCataImport.setIsValid("0");
+                        }else {
+                            conCataImport.setCheckResult("导入成功");
+                            conCataImport.setImportReport("有效数据");
+                            conCataImport.setIsValid("1");
+                        }
+                     //   conCataImport.setUuid(IdGen.uuid());
+                        cataImportService.save(conCataImport);
+                        successNum++;
+                    }else {
+                        conCataImport.setCheckResult(errMsg);
                         conCataImport.setImportReport("无效数据");
                         conCataImport.setIsValid("0");
-                    }else {
-                        conCataImport.setCheckResult("导入成功");
-                        conCataImport.setImportReport("有效数据");
-                        conCataImport.setIsValid("1");
+                        successNum++;
                     }
-                    cataImportService.save(conCataImport);
-                    successNum++;
                 }catch(ConstraintViolationException ex){
                     failureNum++;
                 }catch (Exception ex) {
                     failureNum++;
                 }
             }
-            ConCataImportFile conCataImportFile = new ConCataImportFile();
-            conCataImportFile.setUuid(fileUuid);
-            conCataImportFile.setImportCount(successNum);
-            User user = UserUtils.getUser();
-            conCataImportFile.setImportUserName(user.getName());
-            conCataImportFile.setImportOrgCode(user.getOrgCode());
-            conCataImportFile.setImportOrgName(user.getOrgName());
-            conCataImportFile.setImportStatus("0");
-            conCataImportFile.setImportLevel(user.getRegionCode());
-            importFileService.saveOrUpdate(conCataImportFile);
+            if (successNum != 0) {
+                ConCataImportFile conCataImportFile = new ConCataImportFile();
+                conCataImportFile.setUuid(fileUuid);
+                conCataImportFile.setImportCount(successNum);
+                User user = UserUtils.getUser();
+                conCataImportFile.setImportUserName(user.getName());
+                conCataImportFile.setImportOrgCode(user.getOrgCode());
+                conCataImportFile.setImportOrgName(user.getOrgName());
+                conCataImportFile.setImportStatus("0");
+                conCataImportFile.setImportLevel(user.getRegionCode());
+                importFileService.saveOrUpdate(conCataImportFile);
+            }
             if (failureNum>0){
                 failureMsg.insert(0, "，失败 "+failureNum+" 条记录。");
             }
-            return AjaxJson.success("已成功导入 "+successNum+" 条记录"+failureMsg).data(conCataImportFile);
+            return AjaxJson.success("已成功导入 "+successNum+" 条记录"+failureMsg).data(fileUuid);
         } catch (Exception e) {
             return AjaxJson.error("导入失败！失败信息："+e.getMessage());
         }
+    }
+
+    @RequestMapping("saveImport")
+    public AjaxJson saveImport(ConCataImport conCataImport) {
+        List<ConCataImport> cataList = cataImportService.lambdaQuery().eq(ConCataImport::getImportFileUuid,conCataImport.getImportFileUuid())
+                .eq(ConCataImport::getIsValid,"1").list();
+        if (cataList.size() > 0) {
+            cataList.forEach(cataImport -> {
+                cataMaintainService.saveImportCata(cataImport);
+            });
+        }
+        ConCataImportFile cataImportFile = importFileService.lambdaQuery()
+                .eq(ConCataImportFile::getUuid,conCataImport.getImportFileUuid())
+                .one();
+        cataImportFile.setImportStatus("1");
+        importFileService.updateById(cataImportFile);
+        return AjaxJson.success("保存成功");
     }
 
 

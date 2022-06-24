@@ -17,31 +17,31 @@ public class ConCataImport extends DataEntity<ConCataImport> {
 
     private static final long serialVersionUID = 1L;
 
-    private String uuid;
+  //  private String uuid;
     /** 导入文件id */
     private String importFileUuid;
     /** 目录基本编码 */
-    @ExcelField(title = "基本编码（必填）",sort = 0)
+    @ExcelField(title = "基本编码（必填）",sort = 1)
     @NotBlank
     private String baseCode;
     /** 目录名称 */
     @NotBlank
-    @ExcelField(title = "目录名称（必填）",sort = 1)
+    @ExcelField(title = "目录名称（必填）",sort = 2)
     private String cataName;
     /** 事项类型 */
     @NotBlank
-    @ExcelField(title = "事项类型（必填）",dictType="con_item_type",sort = 2)
+    @ExcelField(title = "事项类型（必填）",dictType="con_item_type",sort = 3)
     private String cataType;
     /** 行使层级 */
     @NotBlank
-    @ExcelField(title = "行使层级（必填）",dictType="item_level",sort = 3)
+    @ExcelField(title = "行使层级（必填）",dictType="item_level",sort = 4)
     private String cataLevel;
     /** 查验结果 */
     private String checkResult;
     /** 导入报告 */
     private String importReport;
     /** 目录版本号 */
-    @ExcelField(title = "版本号（必填,且为正数）")
+    @ExcelField(title = "版本号（必填,且为正数）",sort = 5)
     @NotNull
     private Integer cataVersion;
  /*   @ExcelField(title = "备注")

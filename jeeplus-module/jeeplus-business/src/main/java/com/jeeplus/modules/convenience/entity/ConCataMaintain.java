@@ -16,7 +16,7 @@ public class ConCataMaintain extends DataEntity<ConCataMaintain> {
     /** 导入文件uuid */
     private String importFileUuid;
     /** 导入目录uuid */
-    private String importCataUuid;
+    private String importCataId;
     /** 目录基本编码 */
     private String baseCode;
     /** 目录名称 */
