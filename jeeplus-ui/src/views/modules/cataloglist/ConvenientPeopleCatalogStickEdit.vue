@@ -32,7 +32,7 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="版本号" prop="cataVersion">
-            <el-input oninput="if(value<1)value=1" v-model="formData.cataVersion" type="number" placeholder="请输入版本号" :min="1"></el-input>
+            <el-input  v-model="formData.cataVersion" placeholder="请输入版本号" :change="checkCataVersion()"></el-input>
           </el-form-item>
           <el-form-item label="备注(选填)" prop="remarks">
             <el-input type="textarea" v-model="formData.remarks"></el-input>
@@ -40,7 +40,7 @@
         </el-form>
       </div>
       <div v-else-if="isEdit">
-        <el-form ref="form" :model="formData" label-width="80px">
+        <el-form ref="form" :model="formData" :rules="rules" label-width="80px">
           <el-form-item label="基本编码" prop="baseCode">
             <el-input v-model="formData.baseCode" placeholder="请输入基本编码" :readonly="true"></el-input>
           </el-form-item>
@@ -57,7 +57,7 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="版本号" prop="cataVersion">
-            <el-input oninput="if(value<1)value=1" v-model="formData.cataVersion" type="number" placeholder="请输入版本号" :min="1" :readonly="true"></el-input>
+            <el-input v-model="formData.cataVersion" placeholder="请输入版本号":readonly="true"></el-input>
           </el-form-item>
           <el-form-item label="备注(选填)" prop="remarks">
             <el-input type="textarea" v-model="formData.remarks"></el-input>
@@ -93,7 +93,8 @@
 </template>
 
 <script>
-  import {addCatalogStickData,editCatalogStickData,lookCatalogStickData,getStateData} from "@/api/modules/catalog/catalogStick";
+  import {addCatalogStickData,editCatalogStickData,lookCatalogStickData} from "@/api/modules/catalog/catalogStick";
+  import {getStateData} from "@/api/modules/catalog/dict";
   // 便民目录新增、查看、变更
   import ChDialog from "@/components/ChDialog";
   export default {
@@ -230,6 +231,25 @@
       addDialogClosed(){
         // 关闭弹框，初始化表单数据
         this.$refs.form .resetFields()
+      },
+      // 版本验证规则
+      checkCataVersion () {
+        let checkPlan = '' + this.formData.cataVersion
+        checkPlan = checkPlan
+          .replace(/[^\d.]/g, '') // 清除“数字”和“.”以外的字符
+          .replace(/\.{2,}/g, '.') // 只保留第一个. 清除多余的
+          .replace(/^\./g, '') // 保证第一个为数字而不是.
+          .replace('.', '$#$')
+          .replace(/\./g, '')
+          .replace('$#$', '.')
+        if (checkPlan.indexOf('.') < 0 && checkPlan !== '') {
+          // 以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额
+          checkPlan = parseFloat(checkPlan) + ''
+        } else if (checkPlan.indexOf('.') >= 0) {
+          checkPlan = checkPlan
+            .replace(/^('')*(\d+)\.(\d\d).*$/, '$1$2.$3') // 只能输入两个小数
+        }
+        this.formData.cataVersion = checkPlan
       }
     },
     mounted() {
@@ -238,7 +258,5 @@
   }
 </script>
 <style scoped>
-   .el-input[readonly]{
-     outline: none;
-   }
+
 </style>

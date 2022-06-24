@@ -9,7 +9,7 @@
           <el-input placeholder="请输入操作部门" v-model="searchData.branch"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="getCatalogListData(searchData)">查询</el-button>
+          <el-button type="primary" @click="searchCatalogListData(searchData)">查询</el-button>
           <el-button @click="refreshCatalogList()">重置</el-button>
         </el-form-item>
       </el-form>
@@ -73,13 +73,14 @@
         :total="total">
       </el-pagination>
     </div>
-
+    <ConvenientPeopleCatalogImportDetails ref="ConvenientPeopleCatalogImportDetails"></ConvenientPeopleCatalogImportDetails>
   </div>
 </template>
 <!--便民目录导入-->
 <script>
-  import {getCatalogListData} from "@/api/modules/catalog/catalogList";
+  import {getCatalogListData} from "@/api/modules/catalog/catalogImport";
   import {getStateData} from "@/api/modules/catalog/dict";
+  import ConvenientPeopleCatalogImportDetails from './ConvenientPeopleCatalogImportDetails'
   export default {
     data () {
       return {
@@ -96,6 +97,7 @@
       }
     },
     components: {
+      ConvenientPeopleCatalogImportDetails
     },
     methods: {
       handleSizeChange(val){
@@ -107,7 +109,7 @@
         this.getCatalogListData(this.searchData)
       },
       lookDetails(row){
-        // console.log(row)
+        this.$refs.ConvenientPeopleCatalogImportDetails.init(row)
       },
       getCatalogListData(searchData){
         this.tableData=[]
@@ -124,6 +126,22 @@
           })
         })
 
+      },
+      // 搜索
+      searchCatalogListData(searchData){
+        if (searchData.userName===''&&searchData.branch===''){
+          this.$message('请输入要搜索的操作人员或部门')
+        }else{
+          this.tableData=[]
+          this.loading=true
+            getCatalogListData({pageNo: this.pageNumber, pageSize: this.pageSize,importOrgName:searchData.branch,importUserName:searchData.userName}).then(({data}) => {
+              if (data && data.success) {
+                this.total=data.data.total
+                this.tableData=data.data.records
+              }
+              this.loading = false
+          })
+        }
       },
       //  刷新列表
       refreshCatalogList(){

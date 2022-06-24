@@ -20,8 +20,8 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary">查询</el-button>
-            <el-button>重置</el-button>
+            <el-button type="primary" @click="searchCatalogClaimData(searchData)">查询</el-button>
+            <el-button @click="refreshCatalogStick()">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -105,20 +105,20 @@
       // 分页相关操作
       handleSizeChange(val){
         this.pageSize=val
-        this.getCatalogClaimData(this.searchData)
+        this.getCatalogClaimData()
       },
       handleCurrentChange(val){
         this.pageNumber=val
-        this.getCatalogClaimData(this.searchData)
+        this.getCatalogClaimData()
       },
       // 获取认领列表数据
-      getCatalogClaimData(data){
+      getCatalogClaimData(){
         this.tableData=[]
         this.loading=true
         getStateData({dictType:'con_item_type'}).then(({data})=>{
           this.stateData=data.keyAndValue
         }).then(()=>{
-          getCatalogClaimData({pageNo: this.pageNumber, pageSize: this.pageSize,baseCode:data.basecode,cataName:data.userName,cataType:data.type}).then(({data}) => {
+          getCatalogClaimData({pageNo: this.pageNumber, pageSize: this.pageSize}).then(({data}) => {
             if (data && data.success) {
               this.total=data.data.total
               this.tableData=data.data.records
@@ -127,16 +127,31 @@
           })
         })
       },
+      //搜索
+      searchCatalogClaimData(searchData){
+        if (searchData.basecode===''&&searchData.cataname===''&&searchData.state===''){
+          this.$message('请输入基本编码、目录名称或选择事项类型进行查询')
+        }else{
+          this.tableData=[]
+          this.loading=true
+          getCatalogClaimData({pageNo: this.pageNumber, pageSize: this.pageSize,baseCode:searchData.basecode,cataName:searchData.cataname,cataType:searchData.state}).then(({data}) => {
+            if (data && data.success) {
+              this.total=data.data.total
+              this.tableData=data.data.records
+            }
+            this.loading = false
+          })
+        }
+      },
       // 目录认领
       claim(row){
-        console.log(row)
         this.$confirm('该事项认领后进入目录清单,是否认领?', '认领提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(()=>{
           catalogClaimData(row).then(({data})=>{
             this.$message.success(data.msg)
-            this.getCatalogClaimData(this.searchData)
+            this.getCatalogClaimData()
           })
         }).catch((err)=>{
           this.$message('取消认领')
@@ -158,11 +173,11 @@
         this.searchData.state=''
         this.pageNumber=1
         this.pageSize=20
-        this.getCatalogClaimData(this.searchData)
+        this.getCatalogClaimData()
       }
     },
     mounted() {
-      this.getCatalogClaimData(this.searchData)
+      this.getCatalogClaimData()
     }
   }
 </script>

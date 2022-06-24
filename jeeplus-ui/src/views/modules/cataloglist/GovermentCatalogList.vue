@@ -40,7 +40,6 @@
           :data="tableData"
           style="width: 100%"
           row-key="id"
-          default-expand-all
           :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
           <el-table-column
             type="index"

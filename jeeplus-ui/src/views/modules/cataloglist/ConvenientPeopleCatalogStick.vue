@@ -20,7 +20,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="refreshList(searchData)">查询</el-button>
+            <el-button type="primary" @click="searchListData(searchData)">查询</el-button>
             <el-button @click="refreshCatalogStick()">重置</el-button>
           </el-form-item>
         </el-form>
@@ -88,7 +88,7 @@
       </div>
 
     </div>
-    <ConvenientPeopleCatalogStickEdit ref="ConvenientPeopleCatalogStickEdit" @refreshDataList="updateList"></ConvenientPeopleCatalogStickEdit>
+    <ConvenientPeopleCatalogStickEdit ref="ConvenientPeopleCatalogStickEdit" @refreshDataList="refreshList"></ConvenientPeopleCatalogStickEdit>
   </div>
 
 
@@ -122,11 +122,11 @@
     methods: {
       handleSizeChange(val){
         this.pageSize=val
-        this.refreshList(this.searchData)
+        this.refreshList()
       },
       handleCurrentChange(val){
         this.pageNumber=val
-        this.refreshList(this.searchData)
+        this.refreshList()
       },
       // 启用
       startUse(row){
@@ -141,7 +141,7 @@
           editCatalogStickData({id:this.handleId,enableStatus:'1'}).then(({data})=>{
             if (data.success){
               this.$message.success('启用成功')
-              this.refreshList(this.searchData)
+              this.refreshList()
             }
           })
         }).catch((err)=>{
@@ -161,7 +161,7 @@
           editCatalogStickData({id:this.handleId,enableStatus:'0'}).then(({data})=>{
               if (data.success){
                 this.$message.success('停运成功')
-                this.refreshList(this.searchData)
+                this.refreshList()
               }
           })
         }).catch((err)=>{
@@ -181,23 +181,7 @@
         this.$refs.ConvenientPeopleCatalogStickEdit.init('add', '')
       },
       // 表单数据展示
-      refreshList(searchData) {
-        this.tableData=[]
-        this.loading = true
-        getStateData({dictType:'con_item_type'}).then(({data})=>{
-          this.stateData=data.keyAndValue
-        }).then(()=>{
-          getCatalogStickData({pageNo: this.pageNumber, pageSize: this.pageSize,baseCode:searchData.basecode,cataName:searchData.cataname,cataType:searchData.state}).then(({data}) => {
-            this.loading = false
-            if (data && data.success) {
-              this.total=data.data.total
-              this.tableData=data.data.records
-            }
-          })
-        })
-      },
-      // 新增变更后刷新列表
-      updateList(){
+      refreshList() {
         this.tableData=[]
         this.loading = true
         getStateData({dictType:'con_item_type'}).then(({data})=>{
@@ -212,6 +196,23 @@
           })
         })
       },
+      // 搜索
+      searchListData(searchData) {
+        if (searchData.basecode===''&&searchData.cataname===''&&searchData.state===''){
+          this.$message('请输入基本编码、目录名称或选择事项类型进行查询')
+        }else{
+          this.tableData=[]
+          this.loading = true
+            getCatalogStickData({pageNo: this.pageNumber, pageSize: this.pageSize,baseCode:searchData.basecode,cataName:searchData.cataname,cataType:searchData.state}).then(({data}) => {
+              this.loading = false
+              if (data && data.success) {
+                this.total=data.data.total
+                this.tableData=data.data.records
+              }
+            })
+        }
+
+      },
       // 重置表单
       refreshCatalogStick(){
         this.searchData.basecode=''
@@ -219,11 +220,8 @@
         this.searchData.state=''
         this.pageNumber=1
         this.pageSize=20
-        this.refreshList(this.searchData)
+        this.refreshList()
       },
-     getStateData(){
-
-     },
       // 事项类型转换文字展示
       statusFormatter(row, column){
         const type = row.cataType
@@ -231,7 +229,7 @@
       }
     },
     mounted() {
-      this.refreshList(this.searchData)
+      this.refreshList()
     }
   }
 </script>

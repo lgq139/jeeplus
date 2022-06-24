@@ -1092,7 +1092,15 @@ img {
       font-weight: 600;
     }
     .el-form-item__content{
+      .el-col-1{
+        text-align: center;
+      }
       line-height: 32px;
+      .el-date-editor.el-input, .el-date-editor.el-input__inner{
+        .el-input__inner{
+          padding: 4px 12px 4px 26px;
+        }
+      }
       .el-input__inner{
         height: 32px;
         line-height: 32px;
