@@ -12,6 +12,7 @@ import com.jeeplus.common.utils.excel.ImportExcel;
 import com.jeeplus.core.web.BaseController;
 import com.jeeplus.modules.convenience.entity.ConCataImport;
 import com.jeeplus.modules.convenience.entity.ConCataImportFile;
+import com.jeeplus.modules.convenience.entity.ConCataMaintain;
 import com.jeeplus.modules.convenience.excel.ConCataImportListenHandler;
 import com.jeeplus.modules.convenience.service.ConCataImportFileService;
 import com.jeeplus.modules.convenience.service.ConCataImportService;
@@ -73,7 +74,8 @@ public class ConCataImportController extends BaseController {
         String pageNo = request.getParameter("pageNo");
         String pageSize = request.getParameter("pageSize");
         LambdaQueryChainWrapper<ConCataImport> query = cataImportService.lambdaQuery();
-        query.eq(ConCataImport::getImportFileUuid,conCataImport.getImportFileUuid());
+        query.eq(ConCataImport::getImportFileUuid,conCataImport.getImportFileUuid())
+                .eq(ConCataImport::getDelFlag,"0");
         query.orderByDesc(ConCataImport::getUpdateDate);
         IPage<ConCataImport> page = query.page(new Page<>(Long.parseLong(pageNo), Long.parseLong(pageSize)));
         return AjaxJson.success().data(page);
@@ -93,11 +95,12 @@ public class ConCataImportController extends BaseController {
                 try{
                     LambdaQueryChainWrapper<ConCataImport> query = cataImportService.lambdaQuery();
                     String errMsg = beanValidator(conCataImport);
+                    conCataImport.setImportFileUuid(fileUuid);
                     if (StringUtils.isBlank(errMsg)) {
-                        List<ConCataImport> res = query.eq(ConCataImport::getBaseCode,conCataImport.getBaseCode())
-                                .eq(ConCataImport::getCataVersion,conCataImport.getCataVersion()).list();
-                        conCataImport.setImportFileUuid(fileUuid);
-                        if (res.size() > 0) {
+                        boolean flag = cataMaintainService.lambdaQuery().eq(ConCataMaintain::getBaseCode, conCataImport.getBaseCode())
+                                .eq(ConCataMaintain::getCataVersion,conCataImport.getCataVersion())
+                                .exists();
+                        if (flag) {
                             conCataImport.setCheckResult("错误:导入目录相同版本数据已存在");
                             conCataImport.setImportReport("无效数据");
                             conCataImport.setIsValid("0");
@@ -107,14 +110,13 @@ public class ConCataImportController extends BaseController {
                             conCataImport.setIsValid("1");
                         }
                      //   conCataImport.setUuid(IdGen.uuid());
-                        cataImportService.save(conCataImport);
-                        successNum++;
                     }else {
                         conCataImport.setCheckResult(errMsg);
                         conCataImport.setImportReport("无效数据");
                         conCataImport.setIsValid("0");
-                        successNum++;
                     }
+                    cataImportService.save(conCataImport);
+                    successNum++;
                 }catch(ConstraintViolationException ex){
                     failureNum++;
                 }catch (Exception ex) {
@@ -124,13 +126,7 @@ public class ConCataImportController extends BaseController {
             if (successNum != 0) {
                 ConCataImportFile conCataImportFile = new ConCataImportFile();
                 conCataImportFile.setUuid(fileUuid);
-                conCataImportFile.setImportCount(successNum);
-                User user = UserUtils.getUser();
-                conCataImportFile.setImportUserName(user.getName());
-                conCataImportFile.setImportOrgCode(user.getOrgCode());
-                conCataImportFile.setImportOrgName(user.getOrgName());
                 conCataImportFile.setImportStatus("0");
-                conCataImportFile.setImportLevel(user.getRegionCode());
                 importFileService.saveOrUpdate(conCataImportFile);
             }
             if (failureNum>0){
@@ -144,16 +140,25 @@ public class ConCataImportController extends BaseController {
 
     @RequestMapping("saveImport")
     public AjaxJson saveImport(ConCataImport conCataImport) {
-        List<ConCataImport> cataList = cataImportService.lambdaQuery().eq(ConCataImport::getImportFileUuid,conCataImport.getImportFileUuid())
-                .eq(ConCataImport::getIsValid,"1").list();
+        List<ConCataImport> cataList = cataImportService.lambdaQuery()
+                .eq(ConCataImport::getImportFileUuid,conCataImport.getImportFileUuid())
+                .eq(ConCataImport::getDelFlag,"0").list();
         if (cataList.size() > 0) {
             cataList.forEach(cataImport -> {
-                cataMaintainService.saveImportCata(cataImport);
+                if ("1".equals(cataImport.getIsValid())) {
+                    cataMaintainService.saveImportCata(cataImport);
+                }
             });
         }
         ConCataImportFile cataImportFile = importFileService.lambdaQuery()
                 .eq(ConCataImportFile::getUuid,conCataImport.getImportFileUuid())
                 .one();
+        User user = UserUtils.getUser();
+        cataImportFile.setImportCount(cataList.size());
+        cataImportFile.setImportUserName(user.getName());
+        cataImportFile.setImportOrgCode(user.getOrgCode());
+        cataImportFile.setImportOrgName(user.getOrgName());
+        cataImportFile.setImportLevel(UserUtils.getGradeByRegionCode(user.getRegionCode()));
         cataImportFile.setImportStatus("1");
         importFileService.updateById(cataImportFile);
         return AjaxJson.success("保存成功");

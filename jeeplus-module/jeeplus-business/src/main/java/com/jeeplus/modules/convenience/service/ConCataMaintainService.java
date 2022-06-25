@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ConCataMaintainService extends ServiceImpl<ConCataMaintainMapper, ConCataMaintain>  {
 
+    @Transactional(readOnly = false)
     public boolean saveImportCata(ConCataImport conCataImport) {
         ConCataMaintain cataMaintain = new ConCataMaintain();
         cataMaintain.setImportFileUuid(conCataImport.getImportFileUuid());
@@ -23,6 +24,7 @@ public class ConCataMaintainService extends ServiceImpl<ConCataMaintainMapper, C
         return saveCata(cataMaintain);
     }
 
+    @Transactional(readOnly = false)
     public boolean saveCata(ConCataMaintain conCataMaintain) {
         ConCataMaintain entity = super.lambdaQuery()
                 .eq(ConCataMaintain::getBaseCode,conCataMaintain.getBaseCode())

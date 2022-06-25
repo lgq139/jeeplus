@@ -3,11 +3,13 @@ package com.jeeplus.modules.sys.utils;
 import cn.hutool.extra.spring.SpringUtil;
 import com.google.common.collect.Lists;
 import com.jeeplus.common.utils.CacheUtils;
+import com.jeeplus.core.ext.persistence.Node;
 import com.jeeplus.modules.sys.entity.*;
 import com.jeeplus.modules.sys.mapper.DataRuleMapper;
 import com.jeeplus.modules.sys.mapper.MenuMapper;
 import com.jeeplus.modules.sys.mapper.UserMapper;
 import com.jeeplus.modules.sys.security.util.JWTUtil;
+import com.jeeplus.modules.sys.service.BspAreaService;
 import com.jeeplus.modules.sys.service.MenuService;
 import com.jeeplus.modules.sys.service.OfficeService;
 import com.jeeplus.modules.sys.service.RoleService;
@@ -18,6 +20,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户工具类
@@ -41,6 +44,7 @@ public class UserUtils {
 	public static final String CACHE_OFFICE_ALL_LIST = "officeAllList";
 
 	public static final String CACHE_SPLIT = "_user_id_";
+    public static final String CACHE_GRADE_ = "grade_";
 
 	/**
 	 * 根据ID获取用户
@@ -303,4 +307,19 @@ public class UserUtils {
 		return SecurityUtils.getSubject().isPermitted(permission);
 	}
 
+
+    /**
+     * 根据区划代码获取行政级别
+     * @param regionCode
+     * @return
+     */
+    public static String getGradeByRegionCode(String regionCode) {
+        String grade = (String)CacheUtils.get(USER_CACHE, CACHE_GRADE_ + regionCode);
+        if (grade == null){
+            Map<String, Node> regionMap = SpringUtil.getBean(BspAreaService.class).getRegionMap();
+            grade = regionMap.get(regionCode).getGrade();
+            CacheUtils.put(USER_CACHE, CACHE_GRADE_ + regionCode, grade);
+        }
+        return grade;
+    }
 }

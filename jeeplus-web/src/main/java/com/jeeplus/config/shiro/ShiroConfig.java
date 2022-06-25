@@ -108,6 +108,8 @@ public class ShiroConfig {
         filterRuleMap.put( "/sys/refreshToken/**", "anon");
         filterRuleMap.put( "/sys/sysConfig/getConfig", "anon");
         filterRuleMap.put("/openApi/**", "anon");
+        filterRuleMap.put("/api/**", "anon");
+        filterRuleMap.put("/convience/catalog/import/import", "anon");
         // 所有请求通过我们自己的JWT Filter
         filterRuleMap.put("/**", "jwt,kickout");
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);

@@ -131,6 +131,19 @@
           })
         })
       },
+      // 新增
+      add() {
+        this.$refs.ConvenientPeopleCatalogStickEdit.init('view', {id: '', parent: {id: '', name: ''}})
+      },
+      refreshList() {
+        this.loading = true
+        // getTreeData2().then(({data}) => {
+        //   this.loading = false
+        //   if (data && data.success) {
+        //     this.dataList = data.data
+        //   }
+        // })
+      },
       // 搜索
       searchCatalogListData(searchData){
         if (searchData.basecode===''&&searchData.cataname===''&&searchData.state===''){
