@@ -29,5 +29,12 @@ public class ConCataInventory extends DataEntity<ConCataInventory> {
     private String orgCode;
     /** 部门名称 */
     private String orgName;
+    /** 目录状态（如：1:在用  0:取消） */
+    private String status;
+    /** 法律法规 */
+    private String byLaws;
+    /** 目录类型（1：行政审批  2：便民） */
+    private String type;
+
 
 }

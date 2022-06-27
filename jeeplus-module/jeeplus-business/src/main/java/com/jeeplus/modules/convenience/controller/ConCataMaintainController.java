@@ -108,6 +108,7 @@ public class ConCataMaintainController extends BaseController {
         if (flag) {
             return AjaxJson.error("基本编码："+conCataMaintain.getBaseCode()+",该版本数据已存在");
         }
+        conCataMaintain.setImportStatus("1");
         cataMaintainService.saveCata(conCataMaintain);
         return AjaxJson.success("保存成功");
     }
@@ -147,6 +148,7 @@ public class ConCataMaintainController extends BaseController {
             query.eq(ConCataMaintain::getCataType,cataMaintain.getCataType());
         }
         query.eq(ConCataMaintain::getMaxVersion,"1");
+        query.eq(ConCataMaintain::getCataLevel,UserUtils.getGradeByRegionCode(cataMaintain.getCurrentUser().getRegionCode()));
         query.orderByDesc(ConCataMaintain::getUpdateDate);
         List<Object> inventory = cataInventoryService.getBaseCodeList(UserUtils.getUser().getOrgCode());
         query.notIn(inventory.size()>0,ConCataMaintain::getBaseCode,inventory);

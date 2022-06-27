@@ -119,6 +119,7 @@
               {{ cataLevelList[row.cataLevel] }}
             </template>
           </el-table-column>
+          <el-table-column prop="importStatus" label="目录状态" />
           <el-table-column prop="remarks" label="备注" />
           <el-table-column prop="checkResult" label="查验结果" />
           <el-table-column prop="importReport" label="导入报告" />

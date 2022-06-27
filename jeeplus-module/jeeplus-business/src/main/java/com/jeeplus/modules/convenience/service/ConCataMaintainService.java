@@ -21,6 +21,7 @@ public class ConCataMaintainService extends ServiceImpl<ConCataMaintainMapper, C
         cataMaintain.setCataType(conCataImport.getCataType());
         cataMaintain.setCataLevel(conCataImport.getCataLevel());
         cataMaintain.setCataVersion(conCataImport.getCataVersion());
+        cataMaintain.setImportStatus(conCataImport.getImportStatus());
         return saveCata(cataMaintain);
     }
 

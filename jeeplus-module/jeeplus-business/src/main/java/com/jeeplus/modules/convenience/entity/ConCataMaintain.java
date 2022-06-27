@@ -29,7 +29,7 @@ public class ConCataMaintain extends DataEntity<ConCataMaintain> {
     private Integer cataVersion;
     /** 停用、启用 */
     private String enableStatus;
-    /** 导入目录状态（如：在用） */
+    /** 导入目录状态（如：1:在用  0:取消） */
     private String importStatus;
     /** 是否最大版本（1：是 0否） */
     private String maxVersion;

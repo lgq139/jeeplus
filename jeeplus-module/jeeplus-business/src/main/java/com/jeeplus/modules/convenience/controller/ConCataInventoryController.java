@@ -50,6 +50,8 @@ public class ConCataInventoryController extends BaseController {
     public AjaxJson getDetil(ConCataInventory cataInventory) {
         List<ConCataInventory> list = cataInventoryService.lambdaQuery()
                 .eq(ConCataInventory::getBaseCode,cataInventory.getBaseCode())
+                .eq(ConCataInventory::getOrgCode,cataInventory.getCurrentUser().getOrgCode())
+                .orderByDesc(ConCataInventory::getCataVersion)
                 .list();
         return AjaxJson.success().data(list);
     }
@@ -77,6 +79,7 @@ public class ConCataInventoryController extends BaseController {
             query.eq(ConCataInventory::getCataType,cataInventory.getCataType());
         }
         query.eq(ConCataInventory::getOrgCode, UserUtils.getUser().getOrgCode());
+        query.eq(ConCataInventory::getType,cataInventory.getType());
         query.orderByDesc(ConCataInventory::getUpdateDate);
         IPage<ConCataInventory> page = query.page(new Page<>(Long.parseLong(pageNo), Long.parseLong(pageSize)));
         return AjaxJson.success().data(page);
