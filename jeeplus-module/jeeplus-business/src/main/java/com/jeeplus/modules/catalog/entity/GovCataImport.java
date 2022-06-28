@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
  * 便民目录清单
  */
 @Data
-@TableName("approve_cata_import")
+@TableName("gov_cata_import")
 public class GovCataImport extends DataEntity<GovCataImport> {
 
     private static final long serialVersionUID = 1L;
