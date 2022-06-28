@@ -1,12 +1,10 @@
-package com.jeeplus.modules.convenience.service;
+package com.jeeplus.modules.catalog.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.jeeplus.modules.convenience.entity.ApproveCataImport;
-import com.jeeplus.modules.convenience.entity.ConCataInventory;
-import com.jeeplus.modules.convenience.entity.ConCataMaintain;
-import com.jeeplus.modules.convenience.mapper.ConCataInventoryMapper;
+import com.jeeplus.modules.catalog.entity.GovCataImport;
+import com.jeeplus.modules.catalog.entity.ConCataInventory;
+import com.jeeplus.modules.catalog.entity.ConCataMaintain;
+import com.jeeplus.modules.catalog.mapper.ConCataInventoryMapper;
 import com.jeeplus.modules.sys.entity.User;
 import com.jeeplus.modules.sys.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +44,7 @@ public class ConCataInventoryService extends ServiceImpl<ConCataInventoryMapper,
 
     //政务目录导入保存
     @Transactional(readOnly = false)
-    public boolean saveApproveCata(ApproveCataImport approveCataImport) {
+    public boolean saveApproveCata(GovCataImport approveCataImport) {
         ConCataInventory cataInventory = new ConCataInventory();
         cataInventory.setBaseCode(approveCataImport.getBaseCode());
         cataInventory.setCataName(approveCataImport.getCataName());

@@ -1,4 +1,4 @@
-package com.jeeplus.modules.convenience.entity;
+package com.jeeplus.modules.catalog.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.jeeplus.core.ext.persistence.DataEntity;

@@ -1,7 +1,7 @@
-package com.jeeplus.modules.convenience.mapper;
+package com.jeeplus.modules.catalog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jeeplus.modules.convenience.entity.ConCataImport;
+import com.jeeplus.modules.catalog.entity.ConCataImport;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 

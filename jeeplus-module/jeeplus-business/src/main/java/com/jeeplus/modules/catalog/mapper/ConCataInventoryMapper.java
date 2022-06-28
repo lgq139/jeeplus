@@ -1,7 +1,7 @@
-package com.jeeplus.modules.convenience.mapper;
+package com.jeeplus.modules.catalog.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.jeeplus.modules.convenience.entity.ConCataInventory;
+import com.jeeplus.modules.catalog.entity.ConCataInventory;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

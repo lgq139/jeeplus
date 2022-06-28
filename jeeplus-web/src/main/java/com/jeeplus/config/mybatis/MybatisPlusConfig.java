@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
         "com.jeeplus.modules.sys.mapper",
         "com.jeeplus.modules.monitor.mapper",
         "com.jeeplus.modules.biz.mapper",
-        "com.jeeplus.modules.convenience.mapper"
+        "com.jeeplus.modules.catalog.mapper"
 })
 public class MybatisPlusConfig {
 

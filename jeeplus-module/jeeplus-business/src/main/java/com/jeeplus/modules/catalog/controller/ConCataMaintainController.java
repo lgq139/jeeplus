@@ -1,4 +1,4 @@
-package com.jeeplus.modules.convenience.controller;
+package com.jeeplus.modules.catalog.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -6,10 +6,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jeeplus.common.json.AjaxJson;
 import com.jeeplus.common.utils.StringUtils;
 import com.jeeplus.core.web.BaseController;
-import com.jeeplus.modules.convenience.entity.ConCataInventory;
-import com.jeeplus.modules.convenience.entity.ConCataMaintain;
-import com.jeeplus.modules.convenience.service.ConCataInventoryService;
-import com.jeeplus.modules.convenience.service.ConCataMaintainService;
+import com.jeeplus.modules.catalog.entity.ConCataMaintain;
+import com.jeeplus.modules.catalog.service.ConCataInventoryService;
+import com.jeeplus.modules.catalog.service.ConCataMaintainService;
 import com.jeeplus.modules.sys.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.List;
 
 /**
