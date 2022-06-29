@@ -110,6 +110,7 @@ public class ShiroConfig {
         filterRuleMap.put("/openApi/**", "anon");
         filterRuleMap.put("/api/**", "anon");
         filterRuleMap.put("/convience/catalog/import/import", "anon");
+        filterRuleMap.put("/approve/catalog/import/import", "anon");
         // 所有请求通过我们自己的JWT Filter
         filterRuleMap.put("/**", "jwt,kickout");
         factoryBean.setFilterChainDefinitionMap(filterRuleMap);

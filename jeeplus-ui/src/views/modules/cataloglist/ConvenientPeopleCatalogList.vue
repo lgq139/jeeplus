@@ -122,7 +122,7 @@
         getStateData({dictType:'con_item_type'}).then(({data})=>{
           this.stateData=data.keyAndValue
         }).then(()=>{
-          getCatalogListData({pageNo: this.pageNumber, pageSize: this.pageSize}).then(({data}) => {
+          getCatalogListData({pageNo: this.pageNumber, pageSize: this.pageSize,type:2}).then(({data}) => {
             if (data && data.success) {
               this.total=data.data.total
               this.tableData=data.data.records
@@ -159,7 +159,8 @@
               pageSize: this.pageSize,
               baseCode: searchData.basecode,
               cataName: searchData.cataname,
-              cataType: searchData.state
+              cataType: searchData.state,
+              type:2
             }).then(({data}) => {
               if (data && data.success) {
                 this.total = data.data.total

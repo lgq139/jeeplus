@@ -1,11 +1,7 @@
 import {get, post} from "@/api/tool";
-// 政务目录数据
-export function getGovernmentCatalogData(params) {
-  return get('/approve/catalog/import/list', params)
-}
 // 政务目录导入
 export function importGovernmentCatalogData(params) {
-  return get('/approve/catalog/import/import', params)
+  return get('/approve/catalog/import/list', params)
 }
 // 政务目录导入保存
 export function saveGovernmentCatalogData(params) {

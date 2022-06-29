@@ -5,7 +5,7 @@
       :visible.sync="visible"
       :isConfirmShow="false"
       v-if="visible"
-      width="1200px"
+      width="70%"
     >
       <div class="public-table-box">
         <el-table
@@ -40,6 +40,11 @@
             :formatter="levelFormatter">
           </el-table-column>
           <el-table-column
+            prop="cataVersion"
+            label="目录版本"
+            min-width="20%">
+          </el-table-column>
+          <el-table-column
             prop="remarks"
             label="备注"
             min-width="20%">
@@ -50,7 +55,7 @@
             label="导入报告"
             min-width="20%">
             <template slot-scope="scope">
-              <div v-if="scope.row.isValid===1">{{scope.row.importReport}}</div>
+              <div v-if="scope.row.isValid==='1'">{{scope.row.importReport}}</div>
               <div v-else  style="color:#FA5555">{{scope.row.importReport}}</div>
             </template>
           </el-table-column>

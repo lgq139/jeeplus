@@ -16,11 +16,12 @@
     </div>
     <div class="public-table-box">
       <div class="public-menu-box">
-        <button class="public-btn"><i class="fa fa-download"></i>下载模板</button>
+        <button class="public-btn" @click="templateDownload"><i class="fa fa-download"></i>下载模板</button>
       <!--  <button class="public-btn"><i class="fa fa-download"></i>导入数据</button>-->
         <el-upload
           style="float: right;margin-left: 10px;"
           :action="uploadAction"
+          :on-progress="handleUploadProgress"
           :on-success="handUploadSucess"
           :show-file-list="false">
           <el-button class="public-btn"><i class="fa fa-download"></i>导入数据</el-button>
@@ -83,7 +84,7 @@
     <ConvenientPeopleCatalogImportDetails ref="ConvenientPeopleCatalogImportDetails"></ConvenientPeopleCatalogImportDetails>
     <el-dialog
       placement="center"
-      width="75%"
+      width="70%"
       trigger="click"
       :visible.sync="dialogVisible"
       :before-close="handleClose"
@@ -119,16 +120,16 @@
               {{ cataLevelList[row.cataLevel] }}
             </template>
           </el-table-column>
+          <el-table-column prop="cataVersion" label="目录版本" />
           <el-table-column prop="importStatus" label="目录状态" />
           <el-table-column prop="remarks" label="备注" />
           <el-table-column prop="checkResult" label="查验结果" />
           <el-table-column prop="importReport" label="导入报告" />
           <el-table-column label="操作" >
             <template slot-scope="scope">
-              <el-button @click="delImport(scope.row)" type="text" size="small">删除</el-button>
+              <el-button @click="delImport(scope.row)" type="text" size="small" style="color:#FA5555 ">删除</el-button>
             </template>
           </el-table-column>
-
         </el-table>
         <el-pagination
           @size-change="handleImportSizeChange"
@@ -165,7 +166,6 @@
         tableData: [],
         loading:true,
         handleLevelData:'',
-        loading:true,
         uploadAction: uploadUrl,
         dialogVisible: false,
         tableKey: 0,
@@ -183,13 +183,23 @@
       ConvenientPeopleCatalogImportDetails
     },
     methods: {
+      // 下载文件
+      templateDownload(){
+        var a = document.createElement("a"); //创建一个<a></a>标签
+        a.href = "/static/file/convenientPeopleCatalog.xlsx"; // 给a标签的href属性值加上地址，注意，这里是绝对路径，不用加 点.
+        a.download = "便民目录.xlsx"; //设置下载文件文件名，这里加上.xlsx指定文件类型，pdf文件就指定.fpd即可
+        a.style.display = "none"; // 障眼法藏起来a标签
+        document.body.appendChild(a); // 将a标签追加到文档对象中
+        a.click(); // 模拟点击了a标签，会触发a标签的href的读取，浏览器就会自动下载了
+        a.remove(); // 一次性的，用完就删除a标签
+      },
       handleSizeChange(val){
         this.pageSize=val
-        this.getCatalogListData(this.searchData)
+        this.getCatalogListData()
       },
       handleCurrentChange(val){
         this.pageNumber=val
-        this.getCatalogListData(this.searchData)
+        this.getCatalogListData()
       },
       handleImportSizeChange(val){
         this.importPageSize=val
@@ -202,14 +212,14 @@
       lookDetails(row){
         this.$refs.ConvenientPeopleCatalogImportDetails.init(row)
       },
-      getCatalogListData(searchData){
+      getCatalogListData(){
         this.tableData=[]
         this.loading=true
         getStateData({dictType:'item_level'}).then(({data})=>{
           this.handleLevelData=data.keyAndValue
           this.cataLevelList = data.keyAndValue
         }).then(()=>{
-          getCatalogListData({pageNo: this.pageNumber, pageSize: this.pageSize,importOrgName:searchData.branch,importUserName:searchData.userName}).then(({data}) => {
+          getCatalogListData({pageNo: this.pageNumber, pageSize: this.pageSize}).then(({data}) => {
             if (data && data.success) {
               this.total=data.data.total
               this.tableData=data.data.records
@@ -248,28 +258,36 @@
         const handleLevel = row.importLevel
         return this.handleLevelData[handleLevel]
       },
+      // 文件正在导入
+      handleUploadProgress(){
+        this.dialogVisible = true
+        this.wordTableLoading = true
+        this.importCataList=[]
+      },
       // 导入成功
       handUploadSucess(res, file) {
         if (res && res.success) {
-          this.dialogVisible = true
           this.importQuery.importFileUuid = res.data
           this.import_cataList()
         } else {
+          this.dialogVisible = false
+          this.wordTableLoading = false
           this.$message('error', res.msg)
         }
       },
       import_cataList() {
         this.wordTableLoading = true
-        this.importQuery.pageNo = this.importPage
-        this.importQuery.pageSize = this.importPageSize
+        this.importQuery.pageNo = 1
+        this.importQuery.pageSize = 20
        getImportCatalogListData(this.importQuery).then(({data}) => {
          if (data && data.success) {
            this.importCataList = data.data.records
            this.importTotal = data.data.total
            if (this.importTotal === 0) {
+             this.$message('error', '导入失败，请重新导入')
              this.visible = false
              this.dialogVisible = false
-             this.getCatalogListData(this.searchData)
+             this.getCatalogListData()
            }
            this.wordTableLoading = false
          }
@@ -299,20 +317,31 @@
         })*/
       },
       delImport(row){
-        deleteImportCatalog(row).then(({data}) => {
-          if (data && data.success) {
-            this.import_cataList()
-            this.$message.success(data.msg)
-          }
-        })
+        this.$confirm('确认删除该条目录吗？')
+          .then(_ => {
+            this.wordTableLoading = true
+            deleteImportCatalog(row).then(({data}) => {
+              if (data && data.success) {
+                this.import_cataList()
+                this.wordTableLoading = false
+                this.$message.success(data.msg)
+              }
+            })
+          })
+          .catch(_ => {
+            this.$message.success("取消删除")
+          })
+
       },
       saveImport(){
+        this.wordTableLoading = true
         saveImportCatalog(this.importQuery).then(({data}) => {
           if (data && data.success) {
+            this.wordTableLoading = false
             this.$message.success(data.msg)
             this.visible = false
             this.dialogVisible = false
-            this.getCatalogListData(this.searchData)
+            this.getCatalogListData()
           } else {
             this.$message('error', '保存失败')
           }
@@ -323,7 +352,7 @@
     },
     mounted() {
       // 获取列表数据
-      this.getCatalogListData(this.searchData)
+      this.getCatalogListData()
       this.getDictByType()
     }
   }
