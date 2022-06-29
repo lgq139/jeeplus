@@ -13,10 +13,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @MapperScan({
-        "com.jeeplus.modules.sys.mapper",
-        "com.jeeplus.modules.monitor.mapper",
-        "com.jeeplus.modules.biz.mapper",
-        "com.jeeplus.modules.catalog.mapper"
+        "com.jeeplus.modules.*.mapper",
+        "com.jeeplus.modules.*.*.mapper"
 })
 public class MybatisPlusConfig {
 
