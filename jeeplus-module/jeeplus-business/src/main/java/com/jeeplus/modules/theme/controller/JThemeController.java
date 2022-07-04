@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jeeplus.common.json.AjaxJson;
-import com.jeeplus.common.utils.StringUtils;
 import com.jeeplus.core.web.BaseController;
 import com.jeeplus.modules.catalog.controller.ConCataImportFileController;
 import com.jeeplus.modules.theme.entity.JTheme;
@@ -74,7 +73,7 @@ public class JThemeController extends BaseController {
      */
     @ApiOperation("更新数据")
     @PutMapping
-    public AjaxJson update(JTheme jTheme) {
+    public AjaxJson update(@RequestBody JTheme jTheme) {
         jThemeService.updateById(jTheme);
         return AjaxJson.success("主题修改成功");
     }
@@ -85,18 +84,11 @@ public class JThemeController extends BaseController {
      * @param id 主键
      * @return 实例对象
      */
-    @ModelAttribute
-    public JTheme get(@RequestParam(required = false) String id) {
-        JTheme entity = null;
-        if (StringUtils.isNotBlank(id)) {
-            entity = jThemeService.getById(id);
-        }
-        if (entity == null) {
-            entity = new JTheme();
-        }
-        return entity;
+    @GetMapping("/{id}")
+    public AjaxJson queryById(@PathVariable("id") String id) {
+        JTheme jTheme = jThemeService.getById(id);
+        return AjaxJson.success().data(jTheme);
     }
-
 
     /**
      * 新增数据
@@ -106,7 +98,7 @@ public class JThemeController extends BaseController {
      */
     @ApiOperation("新增数据")
     @PostMapping
-    public AjaxJson save(JTheme jTheme) {
+    public AjaxJson save(@RequestBody JTheme jTheme) {
         jThemeService.save(jTheme);
         return AjaxJson.success("主题保存成功");
     }
@@ -118,8 +110,9 @@ public class JThemeController extends BaseController {
      * @return 是否成功
      */
     @ApiOperation("通过主键删除数据")
-    @DeleteMapping
-    public AjaxJson deleteById(String id) {
+    @DeleteMapping("/{id}")
+    public AjaxJson deleteById(@PathVariable String id) {
+        jThemeService.removeById(id);
         return AjaxJson.success("主题删除成功");
     }
 }

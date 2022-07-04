@@ -23,6 +23,7 @@ import VueEditor from 'vue2-editor'
 import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
+import {resetForm} from "@/utils/qiEnYun/ruoyi";
 
 
 Vue.use(VueEditor)
@@ -51,6 +52,7 @@ Vue.prototype.moment = moment
 Vue.prototype.deepClone = utils.deepClone
 Vue.prototype.validatenull = utils.validatenull
 Vue.prototype.$events = new Vue()
+Vue.prototype.resetForm = resetForm
 
 // 保存整站vuex本地储存初始状态
 window.SITE_CONFIG = {}
